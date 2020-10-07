@@ -68,6 +68,7 @@ public class HeroController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> delete(@Valid @PathVariable("id") @NotNull Long id){
         logger.debug("Begin delete: id = {}", id);
 
@@ -92,7 +93,7 @@ public class HeroController {
     }
 
     @GetMapping
-    public ResponsePagination<HeroListResponse> findByParameters(@Valid @RequestBody @NotNull HeroQuerySearchRequest queryCriteria,
+    public ResponsePagination<HeroListResponse> findByParameters(@Valid @NotNull HeroQuerySearchRequest queryCriteria,
                                                                @PageableDefault(page = 0, size = 10,
                                                                direction = Sort.Direction.DESC, sort = "id") Pageable pageable){
         logger.debug("Begin findByParameters: queryCriteria = {}, pageable = {}", queryCriteria, pageable);
@@ -101,7 +102,6 @@ public class HeroController {
 
         Page<Hero> heroesFound = heroService.findByParameters(queryCriteriaCmd, pageable);
 
-        System.out.println(heroesFound.getContent());
         List<HeroListResponse> heroesFoundList = heroesFound.stream().map(HeroListResponse::fromModel)
                 .collect(Collectors.toList());
 
